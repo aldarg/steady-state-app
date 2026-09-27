@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="robots" content="noindex" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="theme-color"
+      content="#f3f5f7"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#0f1317"
+      media="(prefers-color-scheme: dark)"
+    />
+    <title>Steady State</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="modulepreload" href="src/app.js" />
+    <link rel="modulepreload" href="src/backup.js" />
+    <link rel="modulepreload" href="src/chart.js" />
+    <link rel="modulepreload" href="src/controller.js" />
+    <link rel="modulepreload" href="src/device.js" />
+    <link rel="modulepreload" href="src/i18n.js" />
+    <link rel="modulepreload" href="src/intake.js" />
+    <link rel="modulepreload" href="src/journal.js" />
+    <link rel="modulepreload" href="src/pk.js" />
+    <link rel="modulepreload" href="src/settings.js" />
+    <link rel="modulepreload" href="src/store.js" />
+    <link rel="modulepreload" href="src/summary.js" />
+    <link rel="modulepreload" href="src/ui-backup.js" />
+    <link rel="modulepreload" href="src/ui-dom.js" />
+    <link rel="modulepreload" href="src/ui-menu.js" />
+    <link rel="modulepreload" href="src/ui-notices.js" />
+    <link rel="modulepreload" href="src/ui.js" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="masthead">
+        <h1 class="app-name" data-text="app.name"></h1>
+        <button
+          class="menu-button"
+          data-ui="menuButton"
+          data-text="menu.title"
+          type="button"
+        ></button>
+      </header>
+
+      <p class="banner" data-ui="banner" role="status" hidden></p>
+
+      <main class="screen" data-ui="main">
+        <section class="install" data-ui="install" role="note" hidden>
+          <button
+            class="install-close"
+            data-ui="installClose"
+            data-label="install.close"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <path d="M6 6 18 18M18 6 6 18" />
+            </svg>
+          </button>
+          <p data-text="install.text"></p>
+          <p data-text="install.how"></p>
+          <p data-ui="installMove" data-text="install.move" hidden></p>
+          <button
+            class="button"
+            data-ui="installSave"
+            data-text="backup.save"
+            type="button"
+            hidden
+          ></button>
+        </section>
+
+        <section class="reminder" data-ui="reminder" role="note" hidden>
+          <button
+            class="install-close"
+            data-ui="reminderClose"
+            data-label="reminder.close"
+            type="button"
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <path d="M6 6 18 18M18 6 6 18" />
+            </svg>
+          </button>
+          <p data-ui="reminderText"></p>
+          <button
+            class="button"
+            data-ui="reminderSave"
+            data-text="backup.save"
+            type="button"
+          ></button>
+        </section>
+
+        <section class="summary" data-ui="summary" hidden>
+          <dl class="summary-cells">
+            <div class="summary-cell">
+              <dt class="summary-label" data-text="summary.now"></dt>
+              <dd class="summary-value" data-ui="summaryLevel"></dd>
+            </div>
+            <div class="summary-cell">
+              <dt class="summary-label" data-text="summary.last"></dt>
+              <dd class="summary-value">
+                <span class="summary-line" data-ui="summaryLastDay"></span>
+                <span class="summary-line" data-ui="summaryLastLine"></span>
+              </dd>
+            </div>
+            <div class="summary-cell">
+              <dt class="summary-label" data-text="summary.steady"></dt>
+              <dd class="summary-value" data-ui="summarySteady"></dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="chart">
+          <div class="chart-box" data-ui="chartBox">
+            <canvas
+              class="chart-canvas"
+              data-ui="chartCanvas"
+              data-label="chart.label"
+              role="img"
+            ></canvas>
+            <div class="chart-tip" data-ui="chartTip" hidden></div>
+          </div>
+          <span
+            class="visually-hidden"
+            id="presets-label"
+            data-text="chart.presets"
+          ></span>
+          <div
+            class="presets"
+            data-ui="presets"
+            role="group"
+            aria-labelledby="presets-label"
+          ></div>
+          <p
+            class="chart-empty"
+            data-ui="chartEmpty"
+            data-text="chart.empty"
+            hidden
+          ></p>
+        </section>
+
+        <section class="log" data-ui="log">
+          <button
+            class="primary"
+            type="button"
+            data-ui="primary"
+            data-text="primary.label"
+            aria-describedby="primary-dose"
+          ></button>
+          <p
+            class="primary-dose"
+            id="primary-dose"
+            data-ui="primaryDose"
+            hidden
+          ></p>
+          <button
+            class="other"
+            type="button"
+            data-ui="other"
+            data-text="primary.other"
+            hidden
+          ></button>
+        </section>
+
+        <form
+          class="entry"
+          data-ui="form"
+          aria-labelledby="form-title"
+          novalidate
+          hidden
+        >
+          <h2
+            class="entry-title"
+            id="form-title"
+            data-ui="formTitle"
+            tabindex="-1"
+          ></h2>
+
+          <div class="field">
+            <label class="field-label" for="dose" data-text="form.dose"></label>
+            <span
+              class="visually-hidden"
+              id="chips-label"
+              data-text="form.chips"
+            ></span>
+            <div
+              class="chips"
+              data-ui="chips"
+              role="group"
+              aria-labelledby="chips-label"
+            ></div>
+            <input
+              class="input dose-input"
+              id="dose"
+              data-ui="dose"
+              type="text"
+              inputmode="decimal"
+              autocomplete="off"
+              aria-describedby="dose-error dose-warning"
+            />
+            <p
+              class="message error"
+              id="dose-error"
+              data-ui="doseError"
+              hidden
+            ></p>
+            <p
+              class="message warning"
+              id="dose-warning"
+              data-ui="doseWarning"
+              hidden
+            ></p>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="time" data-text="form.time"></label>
+            <input
+              class="input time-input"
+              id="time"
+              data-ui="time"
+              type="datetime-local"
+              aria-describedby="time-error"
+            />
+            <p
+              class="message error"
+              id="time-error"
+              data-ui="timeError"
+              hidden
+            ></p>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="note" data-text="form.note"></label>
+            <textarea
+              class="input note-input"
+              id="note"
+              data-ui="note"
+              rows="2"
+              aria-describedby="note-counter note-error"
+            ></textarea>
+            <p
+              class="message counter"
+              id="note-counter"
+              data-ui="noteCounter"
+              hidden
+            ></p>
+            <p
+              class="message error"
+              id="note-error"
+              data-ui="noteError"
+              hidden
+            ></p>
+          </div>
+
+          <div class="actions">
+            <button
+              class="button button-main"
+              type="submit"
+              data-text="form.save"
+            ></button>
+            <button
+              class="button button-quiet"
+              type="button"
+              data-ui="cancel"
+              data-text="form.cancel"
+            ></button>
+            <button
+              class="button button-quiet button-delete"
+              type="button"
+              data-ui="delete"
+              data-text="form.delete"
+              hidden
+            ></button>
+          </div>
+        </form>
+
+        <section
+          class="journal"
+          data-ui="journalSection"
+          aria-labelledby="journal-title"
+          hidden
+        >
+          <h2
+            class="visually-hidden"
+            id="journal-title"
+            data-text="journal.title"
+          ></h2>
+          <div class="journal-list" data-ui="journal"></div>
+        </section>
+
+        <footer class="disclaimer" data-ui="disclaimer">
+          <span data-text="footer.text"></span>
+          <button
+            class="other disclaimer-more"
+            data-ui="introOpen"
+            data-text="footer.more"
+            type="button"
+          ></button>
+        </footer>
+      </main>
+
+      <section class="blocked" data-ui="blocked" hidden>
+        <p class="blocked-text" data-text="blocked.text"></p>
+        <div class="stack">
+          <button
+            class="button button-quiet button-two-line"
+            type="button"
+            data-ui="recoverySaveText"
+          >
+            <span class="button-name" data-text="recovery.saveText"></span>
+            <span class="button-note" data-ui="recoverySaveTextNote"></span>
+          </button>
+          <button
+            class="button button-quiet button-two-line"
+            type="button"
+            data-ui="recoveryRestore"
+          >
+            <span class="button-name" data-text="recovery.restore"></span>
+            <span class="button-note" data-text="recovery.restoreNote"></span>
+          </button>
+          <button
+            class="button button-quiet button-two-line"
+            type="button"
+            data-ui="recoveryStartFresh"
+          >
+            <span class="button-name" data-text="recovery.startFresh"></span>
+            <span
+              class="button-note"
+              data-text="recovery.startFreshNote"
+            ></span>
+          </button>
+        </div>
+        <input
+          type="file"
+          accept=".json,application/json"
+          data-ui="restoreFile"
+          hidden
+        />
+      </section>
+    </div>
+
+    <dialog class="dialog" data-ui="dialog" aria-labelledby="dialog-text">
+      <p class="dialog-text" id="dialog-text" data-ui="dialogText"></p>
+      <div class="actions">
+        <button
+          class="button button-quiet"
+          type="button"
+          data-ui="dialogCancel"
+          data-text="dialog.cancel"
+          autofocus
+        ></button>
+        <button
+          class="button button-main"
+          type="button"
+          data-ui="confirm"
+          data-text="dialog.confirm"
+        ></button>
+      </div>
+    </dialog>
+
+    <dialog class="menu" data-ui="menu" aria-labelledby="menu-title">
+      <div class="menu-body">
+        <div class="menu-top">
+          <h2
+            class="menu-title"
+            id="menu-title"
+            data-ui="menuTitle"
+            tabindex="-1"
+          ></h2>
+          <button
+            class="button button-quiet"
+            type="button"
+            data-ui="menuDone"
+          ></button>
+        </div>
+
+        <p class="banner" data-ui="menuBanner" role="status" hidden></p>
+
+        <fieldset class="menu-group">
+          <legend class="menu-legend" data-ui="menuModel"></legend>
+          <p class="menu-note" data-ui="menuModelNote"></p>
+          <div class="options" data-ui="menuPhenotypes"></div>
+          <label class="option">
+            <input
+              class="option-input"
+              type="radio"
+              name="menu-model"
+              data-ui="menuCustom"
+            />
+            <span class="option-text">
+              <span class="option-name" data-ui="menuCustomLabel"></span>
+            </span>
+          </label>
+          <div class="field half-life" data-ui="halfLifeField" hidden>
+            <label
+              class="field-label"
+              for="half-life"
+              data-ui="halfLifeLabel"
+            ></label>
+            <input
+              class="input half-life-input"
+              id="half-life"
+              data-ui="halfLife"
+              type="text"
+              inputmode="decimal"
+              autocomplete="off"
+              aria-describedby="half-life-hint half-life-error"
+            />
+            <p
+              class="message hint"
+              id="half-life-hint"
+              data-ui="halfLifeHint"
+            ></p>
+            <p
+              class="message error"
+              id="half-life-error"
+              data-ui="halfLifeError"
+              hidden
+            ></p>
+          </div>
+        </fieldset>
+
+        <fieldset class="menu-group">
+          <legend class="menu-legend" data-ui="menuChart"></legend>
+          <label class="option switch-row">
+            <span class="option-text">
+              <span class="option-name" data-ui="menuBandLabel"></span>
+              <span class="option-note" data-ui="menuBandNote"></span>
+            </span>
+            <input
+              class="switch"
+              type="checkbox"
+              role="switch"
+              data-ui="menuBand"
+            />
+          </label>
+          <label class="option switch-row">
+            <span class="option-text">
+              <span class="option-name" data-ui="menuDosesLabel"></span>
+              <span class="option-note" data-ui="menuDosesNote"></span>
+            </span>
+            <input
+              class="switch"
+              type="checkbox"
+              role="switch"
+              data-ui="menuDoses"
+            />
+          </label>
+        </fieldset>
+
+        <fieldset class="menu-group">
+          <legend class="menu-legend" data-ui="menuLanguage"></legend>
+          <div class="locales">
+            <label class="option locale" lang="ru">
+              <input
+                class="option-input"
+                type="radio"
+                name="menu-locale"
+                data-ui="menuRu"
+              />
+              <span class="option-name" data-ui="menuRuLabel"></span>
+            </label>
+            <label class="option locale" lang="en">
+              <input
+                class="option-input"
+                type="radio"
+                name="menu-locale"
+                data-ui="menuEn"
+              />
+              <span class="option-name" data-ui="menuEnLabel"></span>
+            </label>
+          </div>
+        </fieldset>
+
+        <section class="menu-group" aria-labelledby="backup-title">
+          <h3
+            class="menu-legend menu-heading"
+            id="backup-title"
+            data-text="backup.title"
+          ></h3>
+          <p class="backup-last">
+            <span class="backup-label" data-ui="backupLastLabel" hidden></span>
+            <span class="backup-value" data-ui="backupLastValue"></span>
+          </p>
+          <div class="stack">
+            <button
+              class="button button-quiet button-two-line"
+              type="button"
+              data-ui="backupSave"
+            >
+              <span class="button-name" data-text="backup.save"></span>
+              <span class="button-note" data-text="backup.saveNote"></span>
+            </button>
+            <button
+              class="button button-quiet button-two-line"
+              type="button"
+              data-ui="backupCsv"
+            >
+              <span class="button-name" data-text="backup.csv"></span>
+              <span class="button-note" data-text="backup.csvNote"></span>
+            </button>
+            <button
+              class="button button-quiet button-two-line"
+              type="button"
+              data-ui="backupImport"
+            >
+              <span class="button-name" data-text="backup.import"></span>
+              <span class="button-note" data-text="backup.importNote"></span>
+            </button>
+          </div>
+          <input
+            type="file"
+            accept=".json,application/json"
+            data-ui="importFile"
+            hidden
+          />
+        </section>
+      </div>
+    </dialog>
+
+    <dialog
+      class="dialog backup-dialog"
+      data-ui="backupDialog"
+      aria-labelledby="backup-dialog-text"
+    >
+      <p class="dialog-name" data-ui="backupName" hidden></p>
+      <p class="dialog-text" id="backup-dialog-text" data-ui="backupText"></p>
+      <p class="dialog-line" data-ui="backupMergeLine" hidden></p>
+      <p class="dialog-line" data-ui="backupReplaceLine" hidden></p>
+      <div class="stack">
+        <button
+          class="button button-main"
+          type="button"
+          data-ui="backupMerge"
+          data-text="import.merge"
+          hidden
+        ></button>
+        <button
+          class="button button-quiet"
+          type="button"
+          data-ui="backupReplace"
+          data-text="import.replace"
+          hidden
+        ></button>
+        <button
+          class="button button-main"
+          type="button"
+          data-ui="backupRestore"
+          data-text="recovery.restoreConfirm"
+          hidden
+        ></button>
+        <button
+          class="button button-main"
+          type="button"
+          data-ui="backupSaveText"
+          data-text="recovery.freshSave"
+          hidden
+        ></button>
+        <button
+          class="button button-quiet"
+          type="button"
+          data-ui="backupDelete"
+          data-text="recovery.freshDelete"
+          hidden
+        ></button>
+        <button
+          class="button button-quiet"
+          type="button"
+          data-ui="backupCancel"
+          data-text="dialog.cancel"
+          hidden
+        ></button>
+        <button
+          class="button button-quiet"
+          type="button"
+          data-ui="backupOk"
+          data-text="import.ok"
+          hidden
+        ></button>
+      </div>
+    </dialog>
+
+    <dialog class="dialog intro" data-ui="intro" aria-labelledby="intro-title">
+      <h2 class="intro-title" id="intro-title" data-text="intro.title"></h2>
+      <p data-text="intro.lead"></p>
+      <p data-text="intro.text"></p>
+      <div class="actions">
+        <button
+          class="button button-main"
+          data-ui="introOk"
+          data-text="intro.ok"
+          type="button"
+        ></button>
+      </div>
+    </dialog>
+
+    <div class="toast-region" aria-live="polite">
+      <div class="toast" data-ui="toast" hidden>
+        <span class="toast-text" data-ui="toastText"></span>
+        <button
+          class="toast-undo"
+          type="button"
+          data-ui="undo"
+          data-text="toast.undo"
+        ></button>
+      </div>
+    </div>
+
+    <script src="vendor/chart.js-4.5.1/chart.umd.min.js" defer></script>
+    <script src="vendor/hammerjs-2.0.8/hammer.min.js" defer></script>
+    <script
+      src="vendor/chartjs-plugin-zoom-2.2.0/chartjs-plugin-zoom.min.js"
+      defer
+    ></script>
+    <script type="module">
+      import { start } from "./src/app.js";
+
+      start({ window, document });
+    </script>
+  </body>
+</html>

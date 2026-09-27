@@ -1,0 +1,20 @@
+{
+  "id": "./",
+  "name": "Steady State",
+  "short_name": "Steady State",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "lang": "ru",
+  "background_color": "#f3f5f7",
+  "theme_color": "#f3f5f7",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "purpose": "any" },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ]
+}

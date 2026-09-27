@@ -1,0 +1,896 @@
+/* SPEC §7 and decision 13: calm, one quiet accent, no red. Every colour is a
+   token here, with a dark set below; text pairs meet WCAG AA in both. */
+
+:root {
+  color-scheme: light dark;
+
+  --color-bg: #f3f5f7;
+  --color-surface: #fff;
+  --color-text: #1a1f24;
+  --color-muted: #535d68;
+  --color-line: #cfd6dd;
+  --color-edge: #7d8894;
+  --color-accent: #1d6a73;
+  --color-accent-strong: #165860;
+  --color-on-accent: #fff;
+  --color-accent-soft: #e0eef0;
+  --color-dose: rgb(29 106 115 / 35%);
+  --color-band: #e3e9ef;
+  --color-attention: #855400;
+  --color-attention-soft: #fbf0d9;
+  --color-toast: #232a31;
+  --color-toast-text: #f1f4f6;
+  --color-toast-accent: #8ed4db;
+  --color-backdrop: rgb(15 19 23 / 45%);
+  --font: system-ui, sans-serif;
+  --gutter: 1rem;
+  --radius: 0.75rem;
+  --target: 2.75rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0f1317;
+    --color-surface: #172027;
+    --color-text: #e4e8ec;
+    --color-muted: #9ca7b2;
+    --color-line: #2e3943;
+    --color-edge: #66737f;
+    --color-accent: #6cc3cb;
+    --color-accent-strong: #8ad3da;
+    --color-on-accent: #0a2326;
+    --color-accent-soft: #17353a;
+    --color-dose: rgb(108 195 203 / 35%);
+    --color-band: #1a252e;
+    --color-attention: #e2b764;
+    --color-attention-soft: #2e2715;
+    --color-toast: #27313a;
+    --color-toast-text: #e4e8ec;
+    --color-toast-accent: #7fd0d8;
+    --color-backdrop: rgb(0 0 0 / 60%);
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* iOS Safari honours only the prefixed form. */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The page's edges clear a notch and the home indicator. */
+.page {
+  max-width: 30rem;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: max(var(--gutter), env(safe-area-inset-top))
+    max(var(--gutter), env(safe-area-inset-right))
+    max(6rem, env(safe-area-inset-bottom))
+    max(var(--gutter), env(safe-area-inset-left));
+}
+
+/* v1-08 decision 8: the name at the start, the menu button at the end. The
+   row is the button's 44 px, and the header keeps its height. */
+.masthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0 0.75rem;
+}
+
+.app-name {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* A text button whose target is 44 px, its text in line with the page's
+   right edge. */
+.menu-button {
+  flex-shrink: 0;
+  min-width: var(--target);
+  min-height: var(--target);
+  margin-inline-end: -0.5rem;
+  padding: 0 0.5rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: none;
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.banner {
+  margin: 0 0 1.5rem;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--color-attention);
+  border-radius: 0.25rem;
+  background: var(--color-attention-soft);
+}
+
+/* The summary strip (v1-07): three cells of text above the chart, as quiet
+   as the rest, with no border or card. A small muted label over a larger
+   value; a value breaks where its no-break spaces allow, and inside a run
+   only when the run is longer than its cell. */
+.summary {
+  margin-bottom: 1rem;
+}
+
+.summary-cells {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.summary-cell {
+  min-width: 0;
+}
+
+.summary-label {
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+  line-height: 1.3;
+}
+
+.summary-value {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.summary-line {
+  display: block;
+}
+
+/* The chart (v1-05): the page's one distinctive element. The total is drawn
+   in the accent, each dose in the accent at low alpha, the AGNP band in a
+   neutral cool tint; nothing takes a colour from the level. */
+.chart-box {
+  position: relative;
+  height: 16rem;
+}
+
+.chart-tip {
+  position: absolute;
+  top: 1.5rem;
+  left: 0;
+  max-width: calc(100% - 1rem);
+  padding: 0.375rem 0.625rem;
+  border: 1px solid var(--color-line);
+  border-radius: 0.5rem;
+  background: var(--color-surface);
+  box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 12%);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+  pointer-events: none;
+}
+
+.chart-tip-title,
+.chart-tip-line {
+  display: block;
+  white-space: nowrap;
+}
+
+.chart-tip-title {
+  font-weight: 600;
+}
+
+.presets {
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.preset {
+  flex: 1;
+  min-height: var(--target);
+  padding: 0 0.25rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: none;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.preset[aria-pressed="true"] {
+  background: var(--color-accent-soft);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.chart-empty {
+  margin: 0;
+  padding: 1.5rem 0 0.5rem;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+/* The primary action. */
+.log {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
+  padding-top: 2rem;
+}
+
+.primary {
+  min-height: 4.5rem;
+  padding: 0.75rem 1.5rem;
+  border: 0;
+  border-radius: 1.25rem;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-size: 1.375rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.primary:active {
+  background: var(--color-accent-strong);
+}
+
+.primary-dose {
+  margin: 0;
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.other {
+  align-self: center;
+  min-width: var(--target);
+  min-height: var(--target);
+  padding: 0 0.75rem;
+  border: 0;
+  background: none;
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+/* The full form. */
+.entry {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.entry-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.entry-title:focus {
+  outline: none;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field-label {
+  font-weight: 600;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chip {
+  min-width: var(--target);
+  min-height: var(--target);
+  padding: 0 1rem;
+  border: 1px solid var(--color-edge);
+  border-radius: 999px;
+  background: var(--color-surface);
+  font-variant-numeric: tabular-nums;
+}
+
+.chip[aria-pressed="true"] {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+  font-weight: 600;
+}
+
+.input {
+  width: 100%;
+  min-height: var(--target);
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-edge);
+  border-radius: 0.5rem;
+  background: var(--color-surface);
+}
+
+.input[aria-invalid="true"] {
+  border-color: var(--color-attention);
+  box-shadow: inset 0 0 0 1px var(--color-attention);
+}
+
+.dose-input,
+.time-input {
+  font-variant-numeric: tabular-nums;
+}
+
+.note-input {
+  resize: vertical;
+}
+
+.message {
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.error {
+  color: var(--color-attention);
+  font-weight: 600;
+}
+
+.warning {
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--color-attention);
+  border-radius: 0.25rem;
+  background: var(--color-attention-soft);
+}
+
+.counter {
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.button {
+  min-width: var(--target);
+  min-height: var(--target);
+  padding: 0 1.25rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+
+.button-main {
+  border: 1px solid var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.button-main:active {
+  background: var(--color-accent-strong);
+}
+
+.button-quiet {
+  border: 1px solid var(--color-edge);
+  background: var(--color-surface);
+}
+
+/* The edit form's delete: as quiet as cancel, set apart at the end. */
+.button-delete {
+  margin-inline-start: auto;
+}
+
+/* v1-09 decisions 4 to 6: buttons one under another, each the full width. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+/* A button's name over a short muted second line, both at the start. */
+.button-two-line {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding-block: 0.5rem;
+  text-align: start;
+}
+
+.button-note {
+  color: var(--color-muted);
+  font-size: 0.875rem;
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+
+/* v1-11 decision 5: the install hint, in .banner's shape, calm rather than a
+   warning: the accent's border over its soft tint, in both themes. Its close
+   button sits in the top right corner, a 44 px target, and the text keeps
+   clear of it. It follows .button here, whose save button it restyles.
+   v1-13 decision 6: the backup reminder looks as it does, with the same
+   close button. */
+.install,
+.reminder {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 0 0 1.5rem;
+  padding: 0.75rem var(--target) 0.75rem 1rem;
+  border-left: 3px solid var(--color-accent);
+  border-radius: 0.25rem;
+  background: var(--color-accent-soft);
+}
+
+.install p,
+.reminder p {
+  margin: 0;
+}
+
+/* As quiet as the panel's buttons, with .button's 44 px. */
+.install .button,
+.reminder .button {
+  margin-top: 0.25rem;
+  border: 1px solid var(--color-edge);
+  background: var(--color-surface);
+}
+
+.install-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  place-items: center;
+  width: var(--target);
+  height: var(--target);
+  padding: 0;
+  border: 0;
+  border-radius: 0.5rem;
+  background: none;
+  color: var(--color-muted);
+}
+
+/* The journal: a quiet list under the primary action or the form. Rows read
+   as lines of text, not as buttons; a gap is a thin dashed rule in grey. */
+.journal {
+  margin-top: 2.5rem;
+}
+
+.day {
+  margin: 1.5rem 0 0.25rem;
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* v1-14 decision 1: pulled out by its side padding, so that its text starts
+   level with the day headings, while its tints and inset focus ring still
+   clear the text, reaching into the gutter. */
+.row {
+  display: block;
+  width: calc(100% + 0.5rem);
+  min-height: var(--target);
+  margin-inline: -0.25rem;
+  padding: 0.5625rem 0.25rem;
+  border: 0;
+  border-bottom: 1px solid var(--color-line);
+  border-radius: 0;
+  background: none;
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+}
+
+.row:focus-visible {
+  outline-offset: -3px;
+}
+
+.row:active {
+  background: var(--color-accent-soft);
+}
+
+@media (hover: hover) {
+  .row:hover {
+    background: var(--color-surface);
+  }
+}
+
+/* The note stays on the row's one line, cut with an ellipsis. */
+.row-line {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.gap::after {
+  flex: 1;
+  border-top: 1px dashed var(--color-edge);
+  content: "";
+}
+
+/* v1-12 decision 6: the disclaimer, a short muted line that ends the page,
+   left-aligned in its column, with no position of its own, so it never
+   covers the chart. Its link keeps .other's look and 44 px target, inline
+   at the end of the line, and .other's minimum width still gives a short
+   label its 44 px. v1-14 decision 8: it has no side padding, and its label
+   starts at its start, so that wrapped onto its own line it starts at the
+   text's edge. */
+.disclaimer {
+  margin-top: 2.5rem;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+.disclaimer-more {
+  padding-inline: 0;
+  text-align: start;
+}
+
+.blocked {
+  padding: 1rem;
+  border-left: 3px solid var(--color-line);
+}
+
+.blocked-text {
+  margin: 0 0 1.25rem;
+}
+
+/* The duplicate dialog. */
+.dialog {
+  width: min(22rem, calc(100% - 2 * var(--gutter)));
+  padding: 1.25rem;
+  border: 0;
+  border-radius: 1rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.dialog::backdrop {
+  background: var(--color-backdrop);
+}
+
+.dialog-text {
+  margin: 0 0 1.25rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.dialog .actions {
+  justify-content: flex-end;
+}
+
+/* v1-12 decision 6: the intro keeps .dialog's width and surface; its title
+   sits above the lead and the text, spaced as the dialog's text is. */
+.intro-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.intro p {
+  margin: 0 0 1.25rem;
+}
+
+/* v1-09 decision 5: the backup dialog, the file's name small and muted
+   above what the file holds and what each choice does. */
+.dialog-name {
+  margin: 0 0 0.5rem;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+.dialog-line {
+  margin: 0 0 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.backup-dialog .dialog-text:has(+ .dialog-line:not([hidden])) {
+  margin-bottom: 1rem;
+}
+
+/* The menu (v1-08): a full-screen panel that scrolls inside, clear of the
+   notch and the home indicator. Its groups are set apart by space, not
+   cards; nothing in it moves. */
+.menu {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: max(var(--gutter), env(safe-area-inset-top))
+    max(var(--gutter), env(safe-area-inset-right))
+    max(2rem, env(safe-area-inset-bottom))
+    max(var(--gutter), env(safe-area-inset-left));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.menu::backdrop {
+  background: var(--color-bg);
+}
+
+.menu-body {
+  max-width: 30rem;
+  margin: 0 auto;
+}
+
+.menu-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.menu-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.menu-title:focus {
+  outline: none;
+}
+
+.menu-group {
+  min-width: 0;
+  margin: 0 0 2rem;
+  padding: 0;
+  border: 0;
+}
+
+.menu-legend {
+  margin-bottom: 0.5rem;
+  padding: 0;
+  font-weight: 600;
+}
+
+.menu-note {
+  margin: 0 0 0.5rem;
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+}
+
+/* A radio or a switch and its text: the whole row is the target. */
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: var(--target);
+  padding-block: 0.375rem;
+  cursor: pointer;
+}
+
+.option-input {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+  accent-color: var(--color-accent);
+}
+
+.option-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.option-name {
+  overflow-wrap: anywhere;
+}
+
+.option-note {
+  color: var(--color-muted);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The custom half-life's field, under its radio. */
+.half-life {
+  margin: 0.25rem 0 0 2rem;
+}
+
+.half-life-input {
+  max-width: 8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.hint {
+  color: var(--color-muted);
+}
+
+/* A switch is a checkbox drawn as a track and a knob, after its text: off,
+   an edge-coloured knob at the start of a plain track; on, a knob at the end
+   of a track in the accent. */
+.switch-row {
+  justify-content: space-between;
+}
+
+.switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 1.5rem;
+  margin: 0;
+  border: 1px solid var(--color-edge);
+  border-radius: 999px;
+  background: var(--color-surface);
+  cursor: pointer;
+  appearance: none;
+}
+
+.switch::before {
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 50%;
+  background: var(--color-edge);
+  content: "";
+}
+
+.switch:checked {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+}
+
+.switch:checked::before {
+  background: var(--color-on-accent);
+  transform: translateX(1.25rem);
+}
+
+/* v1-09 decision 4: the backup group's heading reads as the groups'
+   legends do, and its line has its label muted over its value. */
+.menu-heading {
+  margin-top: 0;
+  font-size: 1rem;
+}
+
+.backup-last {
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.backup-label {
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+/* The two languages side by side. */
+.locales {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 1.5rem;
+}
+
+/* The undo toast, clear of the home indicator. */
+.toast-region {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding-right: max(var(--gutter), env(safe-area-inset-right));
+  padding-bottom: max(var(--gutter), env(safe-area-inset-bottom));
+  padding-left: max(var(--gutter), env(safe-area-inset-left));
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  max-width: 30rem;
+  margin: 0 auto;
+  padding: 0.25rem 0.25rem 0.25rem 1rem;
+  border-radius: var(--radius);
+  background: var(--color-toast);
+  color: var(--color-toast-text);
+  box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 20%);
+  font-variant-numeric: tabular-nums;
+  pointer-events: auto;
+  animation: toast-in 180ms ease-out;
+}
+
+.toast-undo {
+  flex-shrink: 0;
+  min-width: var(--target);
+  min-height: var(--target);
+  padding: 0 0.75rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: none;
+  color: var(--color-toast-accent);
+  font-weight: 600;
+}
+
+.toast-undo:focus-visible {
+  outline-color: var(--color-toast-accent);
+  outline-offset: -3px;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+}
